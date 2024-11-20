@@ -395,7 +395,7 @@ const saltEndings = ["nan", "natan", "itan", "icitan", "cnan", "an", "istan", "i
 const numbers = ["mono", "di", "tri", "tetra", "penta", "hexa", "septa", "okta", "nona", "deka"];
 
 const except: { [key: string]: any[] } = { "peroxid vodiku": [["H", 2], ["O", 2]] }
-const acidExcept: { [key: string]: string } = { "fosforecna": "trihydrogenfosforecna", "jodista": "pentahydrogenjodista" }
+const acidExcept: { [key: string]: string } = { "fosforecna": "trihydrogenfosforecna" }
 
 export function convert(name: string) {
     name = removeAccents(name);
