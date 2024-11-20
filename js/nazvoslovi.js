@@ -391,7 +391,7 @@ const acidEndings = ["na", "nata", "ita", "icita", "cna", "ova", "ista", "icela"
 const saltEndings = ["nan", "natan", "itan", "icitan", "cnan", "an", "istan", "icelan"].reverse();
 const numbers = ["mono", "di", "tri", "tetra", "penta", "hexa", "septa", "okta", "nona", "deka"];
 const except = { "peroxid vodiku": [["H", 2], ["O", 2]] };
-const acidExcept = { "fosforecna": "trihydrogenfosforecna", "jodista": "pentahydrogenjodista" };
+const acidExcept = { "fosforecna": "trihydrogenfosforecna" };
 export function convert(name) {
     name = removeAccents(name);
     var words = name.split(" ");
