@@ -405,12 +405,12 @@ export function convert(name: string) {
         return except[name];
     } else if (words[0] == "kyselina") {
         if (name.includes("vodikova")) {
-            return bezOKyseliny(words[1]).concat(["(l)"]);
+            return bezOKyseliny(words[1]);
         } else {
             return kyselina(words[1]);
         }
     } else if (words[0].endsWith("vodik")) {
-        return bezOKyseliny(words[0]).concat(["(g)"]);
+        return bezOKyseliny(words[0]);
     } else if (words[0].endsWith("n") || words[0].endsWith("id")) {
         var anion: any;
         if (words[0].endsWith("n")) {
