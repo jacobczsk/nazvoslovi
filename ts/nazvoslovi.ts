@@ -394,7 +394,7 @@ const saltEndings = ["nan", "natan", "itan", "icitan", "cnan", "an", "istan", "i
 
 const numbers = ["mono", "di", "tri", "tetra", "penta", "hexa", "septa", "okta", "nona", "deka"];
 
-const except: { [key: string]: any[] } = { "peroxid vodiku": [["H", 2], ["O", 2]] }
+const except: { [key: string]: any[] } = { "peroxid vodiku": [["H", 2], ["O", 2]], "voda": [["H", 2], ["O", 1]] }
 const acidExcept: { [key: string]: string } = { "fosforecna": "trihydrogenfosforecna" }
 
 export function convert(name: string) {
@@ -405,12 +405,21 @@ export function convert(name: string) {
         return except[name];
     } else if (words[0] == "kyselina") {
         if (name.includes("vodikova")) {
-            return bezOKyseliny(words[1]).concat(["(l)"]);
+            return bezOKyseliny(words[1]);
         } else {
             return kyselina(words[1]);
         }
     } else if (words[0].endsWith("vodik")) {
-        return bezOKyseliny(words[0]).concat(["(g)"]);
+        return bezOKyseliny(words[0]);
+    } else if (words[0].startsWith("kation")) {
+        return kation(words[1]);
+    } else if (words[0].startsWith("anion") && words[1].endsWith("ovy")) {
+        let newword = words[1].replace("ovy", "");
+        if (newword.endsWith("id")) {
+            return anions[newword];
+        } else if (newword.endsWith("n")) {
+            return saltAnion(newword);
+        }
     } else if (words[0].endsWith("n") || words[0].endsWith("id")) {
         var anion: any;
         if (words[0].endsWith("n")) {
@@ -424,7 +433,6 @@ export function convert(name: string) {
 
         return [[kat.sum, quantity[0]], [anion.sum, quantity[1]]];
     }
-
 }
 
 function getOxc(name: string, endings: string[]) {
@@ -515,9 +523,10 @@ function saltAnion(name: string) {
     var oxc = getOxc(name, saltEndings);
     name = name.replace(saltEndings[8 - oxc], acidEndings[8 - oxc]);
 
-    if (name.includes("hydrogen")) {
+    if (name.startsWith("hydrogen")) {
         hydrogen = 1;
-    } else {
+        name = name.replace("hydrogen", "");
+    } else if (name.includes("hydrogen")) {
         for (const num of numbers) {
             if (name.includes(num + "hydrogen")) {
                 name = name.replace(num + "hydrogen", "");

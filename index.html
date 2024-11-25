@@ -38,42 +38,70 @@
     <main class="input-group">
         <input type="text" id="name" class="form-control" placeholder="Název">
         <span class="input-group-text">&rarr;</span>
-        <span id="result" class="form-control">
+        <span id="result" class="form-control"></span>
     </main>
+    <br>
+    <h3>Co to umí?</h3>
+    <ul>
+        <li>oxidy/hydroxidy/peroxidy</li>
+        <li>sulfidy/hydrogensulfidy/disulfidy</li>
+        <li>selenidy/hydrogenselenidy/diselenidy</li>
+        <li>telluridy/hydrogentelluridy/ditelluridy</li>
+        <li>halogenidy (F, Cl, Br, I)</li>
+        <li>kyanidy/azidy/ozonidy</li>
+        <li>bezkyslíkaté kyseliny</li>
+        <li>kyslíkaté kyseliny</li>
+        <li>soli kyslíkatých kyselin + hydrogensoli</li>
+        <li>aniony (od kyslíkatých i bezkyslíkatých) a kationy</li>
+    </ul>
     <script type="module">
         import { convert } from "./js/nazvoslovi.js";
 
         function format(compound) {
             var result = "";
-            for (const elem of compound) {
-                if (Array.isArray(elem[0]) && Array.isArray(elem[1])) {
-                    result += format(elem);
-                }
-                else if (typeof elem[0] == "string") {
-                    if (elem[1] == 1) {
-                        result += elem[0];
-                    } else {
-                        result += `${elem[0]}<sub>${elem[1]}</sub>`;
-                    }
-                } else if (Array.isArray(elem[0]) && elem[1] != 1 && elem[0][1] == 1 && (elem[0][0].match(/[A-Z]/g) || []).length == 1) {
-                    result += `${elem[0][0]}<sub>${elem[1]}</sub>`;
-                } else if (Array.isArray(elem[0])) {
-                    if (elem[1] == 1) {
-                        result += `${format([elem[0]])}`;
-                    } else {
+            if (Array.isArray(compound)) {
+                if (typeof compound[1] == "number") {
+                    return format([compound]);
+                } else {
+                    for (const elem of compound) {
+                        if (Array.isArray(elem[0]) && Array.isArray(elem[1])) {
+                            result += format(elem);
+                        }
+                        else if (typeof elem[0] == "string") {
+                            if (elem[1] == 1) {
+                                result += elem[0];
+                            } else {
+                                result += `${elem[0]}<sub>${elem[1]}</sub>`;
+                            }
+                        } else if (Array.isArray(elem[0]) && elem[1] != 1 && elem[0][1] == 1 && (elem[0][0].match(/[A-Z]/g) || []).length == 1) {
+                            result += `${elem[0][0]}<sub>${elem[1]}</sub>`;
+                        } else if (Array.isArray(elem[0])) {
+                            if (elem[1] == 1) {
+                                result += `${format([elem[0]])}`;
+                            } else {
 
-                        result += `(${format([elem[0]])})<sub>${elem[1]}</sub>`
+                                result += `(${format([elem[0]])})<sub>${elem[1]}</sub>`
+                            }
+                        }
                     }
                 }
-
+            } else if (typeof compound == "string") {
+                return compound;
+            } else if (typeof compound == "object") {
+                let charge = Math.abs(compound.charge).toString() + ((compound.charge < 0) ? "-" : "+");
+                result = format(compound.sum) + `<sup>${charge}</sup>`;
             }
             return result;
         }
 
         function fromName() {
             try {
-                document.getElementById('result').innerHTML = format(convert(document.getElementById('name').value));
-            } catch {
+                let formated = format(convert(document.getElementById('name').value));
+                if (formated == "") {
+                    throw "Empty";
+                }
+                document.getElementById('result').innerHTML = formated;
+            } catch (e) {
                 document.getElementById('result').innerHTML = "Zadej platnou sloučeninu";
             }
         }
