@@ -21,7 +21,7 @@ const elems: { [key: string]: { abbrev: string, proton: string, group: string, n
     "fluor": { "abbrev": "F", "proton": "9", "group": "17", "name": "fluor" },
     "neon": { "abbrev": "Ne", "proton": "10", "group": "18", "name": "neon" },
     "sod": { "abbrev": "Na", "proton": "11", "group": "1", "name": "sod\u00edk" },
-    "horec": {
+    "hor": {
         "abbrev": "Mg",
         "proton": "12",
         "group": "2",
@@ -137,7 +137,7 @@ const elems: { [key: string]: { abbrev: string, proton: string, group: string, n
         "group": "11",
         "name": "st\u0159\u00edbro"
     },
-    "kadm": { "abbrev": "Cd", "proton": "48", "group": "12", "name": "kadmium" },
+    "kad": { "abbrev": "Cd", "proton": "48", "group": "12", "name": "kadmium" },
     "ind": { "abbrev": "In", "proton": "49", "group": "13", "name": "indium" },
     "cin": { "abbrev": "Sn", "proton": "50", "group": "14", "name": "c\u00edn" },
     "antimon": {
@@ -394,7 +394,7 @@ const saltEndings = ["nan", "natan", "itan", "icitan", "cnan", "an", "istan", "i
 
 const numbers = ["", "di", "tri", "tetra", "penta", "hexa", "septa", "okta", "nona", "deka"];
 
-const except: { [key: string]: any[] } = { "peroxid vodiku": [["H", 2], ["O", 2]], "voda": [["H", 2], ["O", 1]] }
+const except: { [key: string]: any[] } = { "peroxid vodiku": [["H", 2], ["O", 2]], "voda": [["H", 2], ["O", 1]], "sirovodik": [["H", 2], ["S", 1]], "kyselina sirovodikova": [["H", 2], ["S", 1]] }
 const acidExcept: { [key: string]: string } = { "fosforecna": "trihydrogenfosforecna" }
 
 export function convert(name: string) {
