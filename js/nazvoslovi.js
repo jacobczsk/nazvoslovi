@@ -383,18 +383,18 @@ const anions = {
     "peroxid": { sum: ["O", 2], charge: -2 },
     "hydroxid": { sum: ["OH", 1], charge: -1 },
     "hydrid": { sum: ["H", 1], charge: -1 },
-    "ozonid": { sum: ["O", 3], charge: -3 },
+    "ozonid": { sum: ["O", 3], charge: -1 },
     "azid": { sum: ["N", 3], charge: -1 },
 };
 const kationEndings = ["ny", "naty", "ity", "icity", "cny", "ovy", "isty", "icely"].reverse();
 const acidEndings = ["na", "nata", "ita", "icita", "cna", "ova", "ista", "icela"].reverse();
 const saltEndings = ["nan", "natan", "itan", "icitan", "cnan", "an", "istan", "icelan"].reverse();
-const numbers = ["mono", "di", "tri", "tetra", "penta", "hexa", "septa", "okta", "nona", "deka"];
+const numbers = ["", "di", "tri", "tetra", "penta", "hexa", "septa", "okta", "nona", "deka"];
 const except = { "peroxid vodiku": [["H", 2], ["O", 2]], "voda": [["H", 2], ["O", 1]] };
 const acidExcept = { "fosforecna": "trihydrogenfosforecna" };
 export function convert(name) {
-    name = removeAccents(name);
-    var words = name.split(" ");
+    name = removeAccents(name).trim().toLowerCase();
+    let words = name.split(" ");
     if (Object.keys(except).includes(name)) {
         return except[name];
     }
@@ -422,21 +422,21 @@ export function convert(name) {
         }
     }
     else if (words[0].endsWith("n") || words[0].endsWith("id")) {
-        var anion;
+        let anion;
         if (words[0].endsWith("n")) {
             anion = saltAnion(words[0]);
         }
         else {
             anion = anions[words[0]];
         }
-        var kat = kation(words[1]);
-        var quantity = reduce(Math.abs(anion.charge), Math.abs(kat.charge));
+        let kat = kation(words[1]);
+        let quantity = reduce(Math.abs(anion.charge), Math.abs(kat.charge));
         return [[kat.sum, quantity[0]], [anion.sum, quantity[1]]];
     }
 }
 function getOxc(name, endings) {
-    var oxc = 0;
-    var maxMatch = 0;
+    let oxc = 0;
+    let maxMatch = 0;
     for (const end of endings) {
         if (name.endsWith(end)) {
             if (end.length > maxMatch) {
@@ -449,7 +449,7 @@ function getOxc(name, endings) {
     return oxc;
 }
 function getElem(name) {
-    var element = "";
+    let element = "";
     for (const elem of Object.keys(elems)) {
         if (name.includes(elem)) {
             element = elems[elem].abbrev;
@@ -461,15 +461,15 @@ function getElem(name) {
     return element;
 }
 function reduce(a, b) {
-    var gcd = (a, b) => {
+    let gcd = (a, b) => {
         return b ? gcd(b, a % b) : a;
     };
-    var gcd_v = gcd(a, b);
+    let gcd_v = gcd(a, b);
     return [a / gcd_v, b / gcd_v];
 }
 function kation(name) {
-    var oxc = getOxc(name, kationEndings);
-    var element = getElem(name);
+    let oxc = getOxc(name, kationEndings);
+    let element = getElem(name);
     return { sum: element, charge: oxc };
 }
 function bezOKyseliny(name) {
@@ -482,29 +482,53 @@ function bezOKyseliny(name) {
     throw Error("Unknown anion");
 }
 function kyselina(name) {
-    var hydrogen = 1;
-    var quantity = 1;
-    var oxc = getOxc(name, acidEndings);
+    let hydrogen = 1;
+    let quantity = 1;
+    let oxygens = 0;
+    let thio = 0;
+    let oxc = getOxc(name, acidEndings);
     if (oxc % 2 == 0) {
         hydrogen = 2;
     }
-    var element = getElem(name);
+    let element = getElem(name);
     if (Object.keys(acidExcept).includes(name)) {
         name = acidExcept[name];
     }
     for (const num of numbers) {
+        if (name.startsWith(num + "thio")) {
+            thio = numbers.indexOf(num) + 1;
+            name = name.replace(num + "thio", "");
+        }
         if (name.startsWith(num + "hydrogen")) {
             hydrogen = numbers.indexOf(num) + 1;
+            name = name.replace(num + "hydrogen", "");
         }
-        if (name.replace(num + "hydrogen", "").startsWith(num)) {
+        if (name.startsWith(num)) {
             quantity = numbers.indexOf(num) + 1;
         }
     }
-    return [["H", hydrogen], [element, quantity], ["O", (hydrogen + (quantity * oxc)) / 2]];
+    oxygens += (hydrogen + (quantity * oxc)) / 2;
+    if (thio > oxygens) {
+        throw "Too much sulphur";
+    }
+    oxygens -= thio;
+    if (name.startsWith("per")) {
+        oxygens += 1;
+    }
+    let result = [["H", hydrogen], [element, quantity], ["O", oxygens]];
+    if (thio != 0) {
+        if (element == "S") {
+            result = [["H", hydrogen], [element, quantity + thio], ["O", oxygens]];
+        }
+        else {
+            result.push(["S", thio]);
+        }
+    }
+    return result;
 }
 function saltAnion(name) {
-    var hydrogen = 0;
-    var oxc = getOxc(name, saltEndings);
+    let hydrogen = 0;
+    let oxc = getOxc(name, saltEndings);
     name = name.replace(saltEndings[8 - oxc], acidEndings[8 - oxc]);
     if (name.startsWith("hydrogen")) {
         hydrogen = 1;
@@ -518,8 +542,8 @@ function saltAnion(name) {
             }
         }
     }
-    var acid = kyselina(name);
-    var charge = -acid[0][1] + hydrogen;
+    let acid = kyselina(name);
+    let charge = -acid[0][1] + hydrogen;
     if (hydrogen == 0) {
         acid.shift();
     }
