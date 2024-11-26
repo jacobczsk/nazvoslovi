@@ -384,7 +384,7 @@ const anions: { [key: string]: { sum: any[], charge: number } } = {
     "peroxid": { sum: ["O", 2], charge: -2 },
     "hydroxid": { sum: ["OH", 1], charge: -1 },
     "hydrid": { sum: ["H", 1], charge: -1 },
-    "ozonid": { sum: ["O", 3], charge: -3 },
+    "ozonid": { sum: ["O", 3], charge: -1 },
     "azid": { sum: ["N", 3], charge: -1 },
 };
 
