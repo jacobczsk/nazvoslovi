@@ -537,6 +537,8 @@ function kyselina(name: string) {
     if (thio != 0) {
         if (element == "S") {
             result = [["H", hydrogen], [element, quantity + thio], ["O", oxygens]];
+        } else if (oxygens == 0) {
+            result = [["H", hydrogen], [element, quantity + thio], ["S", thio]];
         } else {
             result.push(["S", thio]);
         }
