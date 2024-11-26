@@ -52,7 +52,7 @@
         <li>bezkyslíkaté kyseliny</li>
         <li>kyslíkaté kyseliny</li>
         <li>soli kyslíkatých kyselin + hydrogensoli</li>
-        <li>aniony (od kyslíkatých i bezkyslíkatých) a kationy</li>
+        <li>aniony (od kyslíkatých i bezkyslíkatých kyselin) a kationy</li>
     </ul>
     <script type="module">
         import { convert } from "./js/nazvoslovi.js";
@@ -88,7 +88,8 @@
             } else if (typeof compound == "string") {
                 return compound;
             } else if (typeof compound == "object") {
-                let charge = Math.abs(compound.charge).toString() + ((compound.charge < 0) ? "-" : "+");
+                let charge = ((Math.abs(compound.charge) != 1) ? Math.abs(compound.charge).toString() : "")
+                    + ((compound.charge < 0) ? "-" : "+");
                 result = format(compound.sum) + `<sup>${charge}</sup>`;
             }
             return result;
