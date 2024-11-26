@@ -398,7 +398,7 @@ const except: { [key: string]: any[] } = { "peroxid vodiku": [["H", 2], ["O", 2]
 const acidExcept: { [key: string]: string } = { "fosforecna": "trihydrogenfosforecna" }
 
 export function convert(name: string) {
-    name = removeAccents(name);
+    name = removeAccents(name).trim().toLowerCase();
     var words = name.split(" ");
 
     if (Object.keys(except).includes(name)) {
